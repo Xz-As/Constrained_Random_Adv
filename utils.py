@@ -4,18 +4,41 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import datasets, transforms
 import numpy as np
-
 #from tqdm import tqdm
 
 cifar10_mean = (0.4914, 0.4822, 0.4465)
 cifar10_std = (0.2471, 0.2435, 0.2616)
 
-mu = torch.tensor(cifar10_mean).view(3, 1, 1).to('cuda:0')
-std = torch.tensor(cifar10_std).view(3, 1, 1).to('cuda:0')
+mu = torch.tensor(cifar10_mean).view(3, 1, 1)
+std = torch.tensor(cifar10_std).view(3, 1, 1)
 
 upper_limit = ((1 - mu) / std)
 lower_limit = ((0 - mu) / std)
 
+def load_baseline(name):
+    if name == 'ResNet18':
+        from model.resnet import ResNet18
+        return ResNet18
+    elif name == 'ResNet18':
+        from model.wide_resnet import WideResNet32
+        return WideResNet32
+    else:
+        raise Exception("Not a good name.")
+
+def load_rand(name):
+    if name == 'ResNet18':
+        from model.first_rand_resnet_lower_bound import ResNet18
+        return ResNet18
+    elif name == 'ResNet18':
+        from model.first_wide_resnet import WideResNet32
+        return WideResNet32
+
+
+def load_model(args):
+    if args.random_training:
+        load_rand(args.network)
+    else:
+        load_baseline(args.network)
 
 def clamp(X, lower_limit, upper_limit):
     return torch.max(torch.min(X, upper_limit), lower_limit)
@@ -26,7 +49,7 @@ def normalize_fn(tensor, mean, std):
     # here we assume the color channel is in at dim=1
     mean = mean[None, :, None, None]
     std = std[None, :, None, None]
-    return tensor.sub(mean).div(std)
+    return (tensor.sub(mean)).div(std)
 
 
 class NormalizeByChannelMeanStd(nn.Module):
@@ -104,11 +127,12 @@ def get_loaders(dir_, batch_size, dataset='cifar10', worker=4, norm=True):
 
 
 # pgd attack
-def attack_pgd(model, X, y, epsilon, alpha, attack_iters, restarts):
-    max_loss = torch.zeros(y.shape[0]).to('cuda:0')
-    max_delta = torch.zeros_like(X).to('cuda:0')
+def attack_pgd(model, X, y, epsilon, alpha, attack_iters, restarts, device):
+    upper_limit = upper_limit.to(device)
+    max_loss = torch.zeros(y.shape[0]).to(device)
+    max_delta = torch.zeros_like(X).to(device)
     for zz in range(restarts):
-        delta = torch.zeros_like(X).to('cuda:0')
+        delta = torch.zeros_like(X).to(device)
         for i in range(len(epsilon)):
             delta[:, i, :, :].uniform_(-epsilon[i][0][0].item(), epsilon[i][0][0].item())
         delta.data = clamp(delta, lower_limit - X, upper_limit - X)
@@ -133,8 +157,8 @@ def attack_pgd(model, X, y, epsilon, alpha, attack_iters, restarts):
     return max_delta
 
 
-# evaluate on clean images with single norm
-def evaluate_standard(test_loader, model):
+# evaluate on clean images
+def evaluate_standard(device, test_loader, model):
     test_loss = 0
     test_acc = 0
     n = 0
@@ -142,7 +166,7 @@ def evaluate_standard(test_loader, model):
 
     with torch.no_grad():
         for i, (X, y) in enumerate(test_loader):
-            X, y = X.to('cuda:0'), y.to('cuda:0')
+            X, y = X.to(device), y.to(device)
             output = model(X)
             loss = F.cross_entropy(output, y)
             test_loss += loss.item() * y.size(0)
@@ -151,60 +175,41 @@ def evaluate_standard(test_loader, model):
     return test_loss/n, test_acc/n
 
 
-# evaluate on clean images with random norms
-def evaluate_standard_random_norms(test_loader, model, args):
-    test_loss = 0
-    test_acc = 0
-    n = 0
-    model.eval()
-
-    with torch.no_grad():
-        for i, (X, y) in enumerate(test_loader):
-            if args.mixed:
-                set_random_norm_mixed(args, model)
-            else:
-                set_random_norm(args, model)
-            X, y = X.to('cuda:0'), y.to('cuda:0')
-            output = model(X)
-            loss = F.cross_entropy(output, y)
-            test_loss += loss.item() * y.size(0)
-            test_acc += (output.max(1)[1] == y).sum().item()
-            n += y.size(0)
-    return test_loss / n, test_acc / n
-
-
 # evaluate on clean images with random weights
-def evaluate_standard_random_weights(test_loader, model, args):
+def evaluate_standard_random_weights(device, test_loader, model, args):
     test_loss = 0
     test_acc = 0
     n = 0
     model.eval()
+    #model.set_rands()
+    #model.set_rands()
+    #model.set_rands()
 
     with torch.no_grad():
         for i, (X, y) in enumerate(test_loader):
             model.set_rands()
-            #set_random_weight(args, model)
-            X, y = X.to('cuda:0'), y.to('cuda:0')
+            X, y = X.to(device), y.to(device)
             output = model(X)
             loss = F.cross_entropy(output, y)
             test_loss += loss.item() * y.size(0)
             test_acc += (output.max(1)[1] == y).sum().item()
             n += y.size(0)
+            print(test_acc, n)
     return test_loss / n, test_acc / n
 
 
-# evaluate on adv images with single norm
-def evaluate_pgd(test_loader, model, attack_iters, restarts, args):
-    epsilon = (args.epsilon / 255.) / std
-    alpha = (args.alpha / 255.) / std
+# evaluate on adv images
+def evaluate_pgd(device, test_loader, model, attack_iters, restarts, args):
+    epsilon = (args.epsilon / 255.)# / std
+    alpha = (args.alpha / 255.)# / std
     pgd_loss = 0
     pgd_acc = 0
     n = 0
     model.eval()
     for i, (X, y) in enumerate(test_loader):
-        X, y = X.to('cuda:0'), y.to('cuda:0')
+        X, y = X.to(device), y.to(device)
 
-        pgd_delta = attack_pgd(model, X, y, epsilon, alpha, attack_iters, restarts)
+        pgd_delta = attack_pgd(model, X, y, epsilon, alpha, attack_iters, restarts, device)
 
         with torch.no_grad():
             output = model(X + pgd_delta)
@@ -216,45 +221,8 @@ def evaluate_pgd(test_loader, model, attack_iters, restarts, args):
     return pgd_loss/n, pgd_acc/n
 
 
-# evaluate on adv images with random norms
-def evaluate_pgd_random_norms(test_loader, model, attack_iters, restarts, args, num_round=3):
-    epsilon = (args.epsilon / 255.) / std
-    alpha = (args.alpha / 255.) / std
-    pgd_loss = 0
-    pgd_acc = 0
-    n = 0
-    model.eval()
-
-    for r in range(num_round):
-        for i, (X, y) in enumerate(test_loader):
-            X, y = X.to('cuda:0'), y.to('cuda:0')
-
-            # random select a path to attack
-            if args.mixed:
-                set_random_norm_mixed(args, model)
-            else:
-                set_random_norm(args, model)
-
-            pgd_delta = attack_pgd(model, X, y, epsilon, alpha, attack_iters, restarts)
-
-            # random select a path to infer
-            if args.mixed:
-                set_random_norm_mixed(args, model)
-            else:
-                set_random_norm(args, model)
-
-            with torch.no_grad():
-                output = model(X + pgd_delta)
-                loss = F.cross_entropy(output, y)
-                pgd_loss += loss.item() * y.size(0)
-                pgd_acc += (output.max(1)[1] == y).sum().item()
-                n += y.size(0)
-
-    return pgd_loss/n, pgd_acc/n
-
-
 # evaluate on adv images with random weights
-def evaluate_pgd_random_weights(test_loader, model, attack_iters, restarts, args, num_round=3):
+def evaluate_pgd_random_weights(device, test_loader, model, attack_iters, restarts, args, num_round=3):
     epsilon = (args.epsilon / 255.) / std
     alpha = (args.alpha / 255.) / std
     pgd_loss = 0
@@ -264,82 +232,36 @@ def evaluate_pgd_random_weights(test_loader, model, attack_iters, restarts, args
 
     for r in range(num_round):
         for i, (X, y) in enumerate(test_loader):
-            X, y = X.to('cuda:0'), y.to('cuda:0')
+            X, y = X.to(device), y.to(device)
 
             # random select a path to attack
-            """if args.mixed:
-                set_random_norm_mixed(args, model)
-            else:"""
             model.set_rands()
             #set_random_weight(args, model)
 
-            pgd_delta = attack_pgd(model, X, y, epsilon, alpha, attack_iters, restarts)
+            pgd_delta = attack_pgd(model, X, y, epsilon, alpha, attack_iters, restarts, device)
 
             # random select a path to infer
-            """if args.mixed:
-                set_random_norm_mixed(args, model)
-            else:"""
             model.set_rands()
             #set_random_weight(args, model)
 
             with torch.no_grad():
+                model.set_rands()
                 output = model(X + pgd_delta)
                 loss = F.cross_entropy(output, y)
                 pgd_loss += loss.item() * y.size(0)
                 pgd_acc += (output.max(1)[1] == y).sum().item()
                 n += y.size(0)
+                print(pgd_acc, n)
 
     return pgd_loss/n, pgd_acc/n
 
 
-# random norm for entire network
-def set_random_norm(args, model):
-    norm_list = set_norm_list(args.num_group_schedule[0], args.num_group_schedule[1], args.random_type, args.gn_type)
-    norm = np.random.choice(norm_list)
-    model.module.set_normss(norm)
-    return norm
-
-
-# random norm for entire network
+# random weight for entire network
 def set_random_weight(args, model):
     distribution_list = []#set_distribution_list(args.num_group_schedule[0], args.num_group_schedule[1], args.random_type, args.gn_type)
     distribution = []#np.random.choice(distribution_list)
     model.set_rands()
     return distribution
-
-
-# random norm for each layer
-def set_random_norm_mixed(args, model):
-    norm_list = set_norm_list(args.num_group_schedule[0], args.num_group_schedule[1], args.random_type, args.gn_type)
-    # get norm module from model
-    for name, module in model.named_modules():
-        if isinstance(module, USNorm):
-            norm = np.random.choice(norm_list)
-            module.set_rands(norm)
-
-
-# setup random space for norms
-def set_norm_list(min_group, max_group, random_type, gn_type):
-    num_group_list = []
-    for i in range(min_group, max_group + 1):
-        num_group_list.append(2 ** i)
-    # define norm list
-    norm_list = []
-    if 'bn' in random_type:
-        norm_list.append('bn')
-    if 'in' in random_type:
-        norm_list.append('in')
-    if '_' not in gn_type:
-        for item in num_group_list:
-            norm_list.append(gn_type + '_' + str(item))
-    else:
-        gn_str = gn_type[:gn_type.index('_')]
-        gbn_str = gn_type[gn_type.index('_')+1:]
-        for item in num_group_list:
-            norm_list.append(gn_str + '_' + str(item))
-            norm_list.append(gbn_str + '_' + str(item))
-
-    return norm_list
 
 
 def set_distribution_list(min_group, max_group, random_type, dtb_type):
