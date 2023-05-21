@@ -36,9 +36,9 @@ def load_rand(name):
 
 def load_model(args):
     if args.random_training:
-        load_rand(args.network)
+        return load_rand(args.network)
     else:
-        load_baseline(args.network)
+        return load_baseline(args.network)
 
 def clamp(X, lower_limit, upper_limit):
     return torch.max(torch.min(X, upper_limit), lower_limit)
