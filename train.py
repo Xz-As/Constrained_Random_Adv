@@ -23,7 +23,7 @@ def get_args():
     parser = argparse.ArgumentParser()
     # training settings
     parser.add_argument('--batch_size', default=128, type=int)
-    parser.add_argument('--data_dir', default='./data/', type=str)
+    parser.add_argument('--data_dir', default='~/datasets/CIFAR10/', type=str)
     parser.add_argument('--dataset', default='cifar10', choices=['cifar10', 'cifar100'])
     parser.add_argument('--epochs', default=200, type=int)
     parser.add_argument('--network', default='ResNet18', choices=['ResNet18', 'WideResNet32'], type=str)
@@ -34,7 +34,7 @@ def get_args():
     parser.add_argument('--weight_decay', default=5e-4, type=float)
     parser.add_argument('--momentum', default=0.9, type=float)
     parser.add_argument('--random_training', action='store_false',
-                        help='Enable random weight training')
+                        help='Disable random weight training')
 
     # adversarial settings
     parser.add_argument('--epsilon', default=8, type=int)
@@ -63,6 +63,7 @@ def get_args():
 def main():
     args = get_args()
     device = torch.device(args.device)
+
     torch.manual_seed(args.seed)    
 
     if args.dataset == 'cifar10':
@@ -189,7 +190,7 @@ def main():
                 delta = torch.zeros_like(X).to(device)
                 for j in range(len(epsilon)):
                     delta[:, j, :, :].uniform_(-epsilon[j][0][0].item(), epsilon[j][0][0].item())
-                delta.data = clamp(delta, lower_limit - X, upper_limit - X)
+                delta.data = clamp(delta, lower_limit.to(device) - X, upper_limit.to(device) - X)
                 delta.requires_grad = True
 
                 # pgd attack
@@ -201,8 +202,8 @@ def main():
 
                     grad = delta.grad.detach()
 
-                    delta.data = clamp(delta + alpha * torch.sign(grad), -epsilon, epsilon)
-                    delta.data = clamp(delta, lower_limit - X, upper_limit - X)
+                    delta.data = clamp(delta + alpha.to(device) * torch.sign(grad), -epsilon, epsilon)
+                    delta.data = clamp(delta, lower_limit.to(device) - X, upper_limit.to(device) - X)
                     delta.grad.zero_()
 
                 delta = delta.detach()

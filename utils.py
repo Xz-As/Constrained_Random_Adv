@@ -41,7 +41,7 @@ def load_model(args):
         return load_baseline(args.network)
 
 def clamp(X, lower_limit, upper_limit):
-    return torch.max(torch.min(X, upper_limit), lower_limit)
+    return torch.max(torch.min(X, upper_limit.to(X.device)), lower_limit.to(X.device))
 
 
 def normalize_fn(tensor, mean, std):
