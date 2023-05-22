@@ -128,14 +128,13 @@ def get_loaders(dir_, batch_size, dataset='cifar10', worker=4, norm=True):
 
 # pgd attack
 def attack_pgd(model, X, y, epsilon, alpha, attack_iters, restarts, device):
-    upper_limit = upper_limit.to(device)
     max_loss = torch.zeros(y.shape[0]).to(device)
     max_delta = torch.zeros_like(X).to(device)
     for zz in range(restarts):
         delta = torch.zeros_like(X).to(device)
         for i in range(len(epsilon)):
             delta[:, i, :, :].uniform_(-epsilon[i][0][0].item(), epsilon[i][0][0].item())
-        delta.data = clamp(delta, lower_limit - X, upper_limit - X)
+        delta.data = clamp(delta, lower_limit.to(device) - X, upper_limit.to(device) - X)
         delta.requires_grad = True
         for _ in range(attack_iters):
             output = model(X + delta)
@@ -146,8 +145,8 @@ def attack_pgd(model, X, y, epsilon, alpha, attack_iters, restarts, device):
             # attack all cases
             d = delta[:, :, :, :]
             g = grad[:, :, :, :]
-            d = clamp(d + alpha * torch.sign(g), -epsilon, epsilon)
-            d = clamp(d, lower_limit - X[:, :, :, :], upper_limit - X[:, :, :, :])
+            d = clamp(d + alpha.to(device) * torch.sign(g), -epsilon, epsilon)
+            d = clamp(d, lower_limit.to(device) - X[:, :, :, :], upper_limit.to(device) - X[:, :, :, :])
             delta.data = d
 
             delta.grad.zero_()
@@ -194,7 +193,7 @@ def evaluate_standard_random_weights(device, test_loader, model, args):
             test_loss += loss.item() * y.size(0)
             test_acc += (output.max(1)[1] == y).sum().item()
             n += y.size(0)
-            print(test_acc, n)
+            #print(test_acc, n)
     return test_loss / n, test_acc / n
 
 
@@ -251,7 +250,7 @@ def evaluate_pgd_random_weights(device, test_loader, model, attack_iters, restar
                 pgd_loss += loss.item() * y.size(0)
                 pgd_acc += (output.max(1)[1] == y).sum().item()
                 n += y.size(0)
-                print(pgd_acc, n)
+                #print(pgd_acc, n)
 
     return pgd_loss/n, pgd_acc/n
 

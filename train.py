@@ -239,7 +239,7 @@ def main():
 
         if args.random_training:
             logger.info('Evaluating with standard images with random weights...')
-            test_loss, test_acc = evaluate_standard_random_weights(test_loader, model, args)
+            test_loss, test_acc = evaluate_standard_random_weights(device,test_loader, model, args)
             logger.info('Evaluating with PGD Attack with random weights...')
             if not args.none_adv_training:
                 pgd_loss, pgd_acc = evaluate_pgd_random_weights(device, test_loader, model, 20, 1, args, num_round=3)
@@ -247,7 +247,7 @@ def main():
                 pgd_loss, pgd_acc = 0.0, 0.0
         else:
             logger.info('Evaluating with standard images...')
-            test_loss, test_acc = evaluate_standard(test_loader, model)
+            test_loss, test_acc = evaluate_standard(device,test_loader, model)
             logger.info('Evaluating with PGD Attack...')
             if not args.none_adv_training:
                 pgd_loss, pgd_acc = evaluate_pgd(device, test_loader, model, 20, 1, args)
