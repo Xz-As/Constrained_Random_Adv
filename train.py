@@ -47,6 +47,7 @@ def get_args():
     # checkpoint settings
     parser.add_argument('--save_dir', default='ckpt', type=str, help='Output directory')
     parser.add_argument('--pretrain', default=None, type=str, help='Path to load the pretrained model')
+    parser.add_argument('--continue_training', action='store_true', help='Continue training at the checkpoint if exists')
 
     # CTRW settings
     parser.add_argument('--lb', default=2048, help='The Lower bound of sum of sigma.')
@@ -140,25 +141,55 @@ def main():
         state.update(pretrained_dict)
         model.load_state_dict(state)
 
-        opt_ = pretrained_model['opt']
-        opt.load_state_dict(opt_)
+        opt.load_state_dict(pretrained_model['opt'])
+        scheduler.load_state_dict(pretrained_model['scheduler'])
+        start_epoch = pretrained_model['epoch'] + 1
         
         best_pgd_acc = pretrained_model['best_pgd_acc']
         test_acc_best_pgd = pretrained_model['standard_acc']
-        test_ = False
-        if args.epochs == -1:
-            args.epochs = start_epoch + 1
-            test_ = True
+        pretrain_loaded = True
 
         print('\n\n Resume from Epoch %d. Load pretrained weight.' % start_epoch)
         print('Best PGD ACC %f.' % best_pgd_acc)
         print('Best Natural ACC %f.' % test_acc_best_pgd)
     
+    elif args.continue_training:
+        ckpt_path = os.path.join(args.save_dir, 'model.pth')
+        try:
+            os.path.exists(ckpt_path)
+        except:
+            raise AssertionError("No such Checkpoint in path", ckpt_path)
+        pretrained_model = torch.load(ckpt_path, map_location=device)
+        partial = pretrained_model['state_dict']
+
+        state = model.state_dict()
+        pretrained_dict = {k: v for k, v in partial.items() if k in list(state.keys()) and state[k].size() == partial[k].size()}
+        state.update(pretrained_dict)
+        model.load_state_dict(state)
+
+        opt.load_state_dict(pretrained_model['opt'])
+        scheduler.load_state_dict(pretrained_model['scheduler'])
+        start_epoch = pretrained_model['epoch'] + 1
+        
+        best_pgd_acc = pretrained_model['best_pgd_acc']
+        test_acc_best_pgd = pretrained_model['standard_acc']
+        pretrain_loaded = True
+
+        print('\n\n Resume from Epoch %d. Load pretrained weight.' % start_epoch)
+        print('Best PGD ACC %f.' % best_pgd_acc)
+        print('Best Natural ACC %f.' % test_acc_best_pgd)
+
     else:
         test_ = False
         start_epoch = 0
         print('\n\nNo checkpoint. Train from scratch.')
 
+    if args.epochs == -1 and pretrain_loaded:
+        args.epochs = start_epoch + 1
+        test_ = True
+    else:
+        test_ = False
+    
     # Start training
     start_train_time = time.time()
 
