@@ -5,7 +5,6 @@ from torch.nn import init
 
 import numpy as np
 
-from .norm import USNorm, GroupBatchNorm2d
 
 BatchNorm2d = nn.BatchNorm2d
 Conv2d = nn.Conv2d
