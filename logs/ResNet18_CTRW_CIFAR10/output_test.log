@@ -1,0 +1,45 @@
+[2023/05/23 19:38:26] - Namespace(batch_size=128, data_dir='~/datasets/CIFAR10/', dataset='cifar10', epochs=200, network='ResNet18', worker=4, lr_schedule='multistep', lr_min=0.0, lr_max=0.1, weight_decay=0.0005, momentum=0.9, none_random_training=True, epsilon=8, alpha=2, c=0.0001, steps=1000, seed=0, attack_iters=10, restarts=1, none_adv_training=False, save_dir='logs/ResNet18_CTRW_CIFAR10', pretrain='ResNet18_CTRW_CIFAR10.pth', continue_training=False, lb=2048, pos=0, eot=False, hang=False, device=0)
+[2023/05/23 19:38:26] - Dataset: cifar10
+[2023/05/23 19:38:57] - Namespace(batch_size=128, data_dir='~/datasets/CIFAR10/', dataset='cifar10', epochs=200, network='ResNet18', worker=4, lr_schedule='multistep', lr_min=0.0, lr_max=0.1, weight_decay=0.0005, momentum=0.9, none_random_training=True, epsilon=8, alpha=2, c=0.0001, steps=1000, seed=0, attack_iters=10, restarts=1, none_adv_training=False, save_dir='logs/ResNet18_CTRW_CIFAR10', pretrain='ResNet18_CTRW_CIFAR10.pth', continue_training=False, lb=2048, pos=0, eot=False, hang=False, device=0)
+[2023/05/23 19:38:57] - Dataset: cifar10
+[2023/05/23 19:38:59] - Evaluating with standard images with random weight...
+[2023/05/23 19:40:44] - Namespace(batch_size=128, data_dir='~/datasets/CIFAR10/', dataset='cifar10', epochs=200, network='ResNet18', worker=4, lr_schedule='multistep', lr_min=0.0, lr_max=0.1, weight_decay=0.0005, momentum=0.9, none_random_training=True, epsilon=8, alpha=2, c=0.0001, steps=1000, seed=0, attack_iters=10, restarts=1, none_adv_training=False, save_dir='logs/ResNet18_CTRW_CIFAR10', pretrain='ResNet18_CTRW_CIFAR10.pth', continue_training=False, lb=2048, pos=0, eot=False, hang=False, device=0)
+[2023/05/23 19:40:44] - Dataset: cifar10
+[2023/05/23 19:40:46] - Evaluating with standard images with random weight...
+[2023/05/23 19:40:49] - Nature Acc: 0.8361 	
+[2023/05/23 19:41:58] - Namespace(batch_size=128, data_dir='~/datasets/CIFAR10/', dataset='cifar10', epochs=200, network='ResNet18', worker=4, lr_schedule='multistep', lr_min=0.0, lr_max=0.1, weight_decay=0.0005, momentum=0.9, none_random_training=True, epsilon=8, alpha=2, c=0.0001, steps=1000, seed=0, attack_iters=10, restarts=1, none_adv_training=False, save_dir='logs/ResNet18_CTRW_CIFAR10', pretrain='ResNet18_CTRW_CIFAR10.pth', continue_training=False, lb=2048, pos=0, eot=False, hang=False, device=0)
+[2023/05/23 19:41:58] - Dataset: cifar10
+[2023/05/23 19:42:00] - Evaluating with standard images with random weight...
+[2023/05/23 19:42:02] - Nature Acc: 0.8403 	
+[2023/05/23 19:43:11] - pgd
+[2023/05/23 19:43:11] - adv: 0.6923 	
+[2023/05/23 19:43:17] - fgsm
+[2023/05/23 19:43:17] - adv: 0.6669 	
+[2023/05/23 19:43:36] - mifgsm
+[2023/05/23 19:43:36] - adv: 0.6601 	
+[2023/05/23 19:44:56] - Namespace(batch_size=128, data_dir='~/datasets/CIFAR10/', dataset='cifar10', epochs=200, network='ResNet18', worker=4, lr_schedule='multistep', lr_min=0.0, lr_max=0.1, weight_decay=0.0005, momentum=0.9, none_random_training=True, epsilon=8, alpha=2, c=0.0001, steps=1000, seed=0, attack_iters=10, restarts=1, none_adv_training=False, save_dir='logs/ResNet18_CTRW_CIFAR10', pretrain='ResNet18_CTRW_CIFAR10.pth', continue_training=False, lb=2048, pos=0, eot=False, hang=False, device=0)
+[2023/05/23 19:44:56] - Dataset: cifar10
+[2023/05/23 19:44:58] - Evaluating with standard images with random weight...
+[2023/05/23 19:45:01] - Nature Acc: 0.8348 	
+[2023/05/23 19:45:44] - Namespace(batch_size=128, data_dir='~/datasets/CIFAR10/', dataset='cifar10', epochs=200, network='ResNet18', worker=4, lr_schedule='multistep', lr_min=0.0, lr_max=0.1, weight_decay=0.0005, momentum=0.9, none_random_training=True, epsilon=8, alpha=2, c=0.0001, steps=1000, seed=0, attack_iters=10, restarts=1, none_adv_training=False, save_dir='logs/ResNet18_CTRW_CIFAR10', pretrain='ResNet18_CTRW_CIFAR10.pth', continue_training=False, lb=2048, pos=0, eot=False, hang=False, device=0)
+[2023/05/23 19:45:44] - Dataset: cifar10
+[2023/05/23 19:45:45] - Evaluating with standard images with random weight...
+[2023/05/23 19:45:48] - Nature Acc: 0.8353 	
+[2023/05/23 19:46:56] - pgd
+[2023/05/23 19:46:56] - adv: 0.6867 	
+[2023/05/23 19:46:56] - PGD Acc: 0.6867 	
+[2023/05/23 19:47:01] - fgsm
+[2023/05/23 19:47:01] - adv: 0.6672 	
+[2023/05/23 19:47:20] - mifgsm
+[2023/05/23 19:47:20] - adv: 0.6580 	
+[2023/05/23 19:55:15] - deepfool
+[2023/05/23 19:55:15] - adv: 0.8283 	
+[2023/05/23 20:03:56] - cwl2
+[2023/05/23 20:03:56] - adv: 0.8392 	
+[2023/05/23 20:21:00] - autoattack
+[2023/05/23 20:21:00] - adv: 0.7389 	
+[2023/05/23 20:21:00] - Testing done.
+[2023/05/23 21:29:51] - Namespace(batch_size=128, data_dir='~/datasets/CIFAR10/', dataset='cifar10', epochs=200, network='ResNet18', worker=4, lr_schedule='multistep', lr_min=0.0, lr_max=0.1, weight_decay=0.0005, momentum=0.9, none_random_training=True, epsilon=8, alpha=2, c=0.0001, steps=1000, seed=0, attack_iters=10, restarts=1, none_adv_training=False, save_dir='logs/ResNet18_CTRW_CIFAR10', pretrain='ResNet18_CTRW_CIFAR10.pth', continue_training=False, lb=2048, pos=0, eot=False, hang=False, device=0)
+[2023/05/23 21:29:51] - Dataset: cifar10
+[2023/05/23 21:29:53] - Evaluating with standard images with random weight...
+[2023/05/23 21:29:56] - Nature Acc: 0.8363 	
