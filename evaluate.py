@@ -73,7 +73,10 @@ def evaluate_attack(device, model, test_loader, args, atk, atk_name, logger):
     test_loader = iter(test_loader)
 
     bar_format = '{desc}[{elapsed}<{remaining},{rate_fmt}]'
-    pbar = tqdm(range(len(test_loader)), file=sys.stdout, bar_format=bar_format, ncols=80)
+    if args.hang:
+        pbar = range(len(test_loader))
+    else:
+        pbar = tqdm(range(len(test_loader)), file=sys.stdout, bar_format=bar_format, ncols=80)
     for i in pbar:
         X, y = test_loader.__next__()
         X, y = X.to(device), y.to(device)
