@@ -16,21 +16,35 @@ A random adversarial defense method
 * Overlook of hyperparameters
 
 ```
-python train.py [-h] [--batch_size BATCH_SIZE] [--data_dir DATA_DIR] [--dataset {cifar10,cifar100}] [--epochs EPOCHS] [--network {ResNet18,WideResNet34}] [--worker WORKER] [--lr_schedule {cyclic,multistep,cosine}] [--lr_min LR_MIN] [--lr_max LR_MAX] [--weight_decay WEIGHT_DECAY] [--momentum MOMENTUM] [--random_training] [--epsilon EPSILON] [--alpha ALPHA] [--seed SEED] [--attack_iters ATTACK_ITERS] [--restarts RESTARTS] [--none_adv_training] [--save_dir SAVE_DIR] [--pretrain PRETRAIN] [--continue_training] [--lb LB] [--pos POS] [--eot] [--hang] [--device DEVICE]
+python train.py [-h] [--batch_size BATCH_SIZE] [--data_dir DATA_DIR] [--dataset {cifar10,cifar100}] [--epochs EPOCHS] [--network {ResNet18,WideResNet34}] [--worker WORKER] [--lr_schedule {cyclic,multistep,cosine}] [--lr_min LR_MIN] [--lr_max LR_MAX] [--weight_decay WEIGHT_DECAY] [--momentum MOMENTUM] [--none_random_training] [--epsilon EPSILON] [--alpha ALPHA] [--seed SEED] [--attack_iters ATTACK_ITERS] [--restarts RESTARTS] [--none_adv_training] [--save_dir SAVE_DIR] [--pretrain PRETRAIN] [--continue_training] [--lb LB] [--pos POS] [--eot] [--hang] [--device DEVICE]
 ```
 
-* To train a ResNet18 with CTRW on CIFAR-10:
+Detailed information of the hyperparameters can be found by:
+
 ```
-python train.py --network ResNet18 --dataset cifar10 --attack_iters 10 --lr_schedule multistep --epochs 200 --adv_training --rp --rp_block -1 -1 --rp_out_channel 48 --rp_weight_decay 1e-2 --save_dir resnet18_c10_CTRW
+python train.py -h
 ```
 
-* To train a ResNet50 with CTRW on ImageNet:
+* Example: to train a model with CTRW on CIFAR-10:
+
 ```
-python train_imagenet.py --pretrained --lr 0.02 --lr_schedule cosine --batch_size 1024 --epochs 90 --adv_train --rp --rp_block -1 -1 --rp_out_channel 48 --rp_weight_decay 1e-2 --save_dir resnet50_imagenet_CTRW
+python train.py --network [baseline name] --dataset cifar10 --attack_iters 10 --lr_schedule multistep --lr_max 0.1 --lr_min 0. --epochs 200 --seed 0 --data_dir [path to dataset] --save_dir [saving path of chackpoint] -lb 2048 --pos 0 --device [cuda number]
 ```
 
+* To run by `nohup`, please add `--hang` to avoid long log by `tqdm`:
+
+```
+nohup python train.py [other hyperparameters] --hang
+```
 
 ## Evaluation of CTRW
+
+* To evaluate the performance under PGD attack CIFAR:
+
+```
+python train.py --pretrain [path to model] --epoch -1 --attack_iters [iteration of PGD attack]
+```
+
 
 * To evaluate the performance of ResNet18 with CTRW on CIFAR-10:
 

@@ -35,7 +35,7 @@ def load_rand(name):
 
 
 def load_model(args):
-    if args.random_training:
+    if args.none_random_training:
         return load_rand(args.network)
     else:
         return load_baseline(args.network)

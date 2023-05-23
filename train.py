@@ -33,7 +33,7 @@ def get_args():
     parser.add_argument('--lr_max', default=0.1, type=float)
     parser.add_argument('--weight_decay', default=5e-4, type=float)
     parser.add_argument('--momentum', default=0.9, type=float)
-    parser.add_argument('--random_training', action='store_false',
+    parser.add_argument('--none_random_training', action='store_false',
                         help='Disable random weight training')
 
     # adversarial settings
@@ -193,7 +193,7 @@ def main():
     # Start training
     start_train_time = time.time()
 
-    if args.random_training:
+    if args.none_random_training:
         print("Training using randomized weight.\n\n")
     else:
         print("Training using fixed weight.\n\n")
@@ -212,7 +212,7 @@ def main():
             _iters = epoch * len(loader) + i
 
             # random select a path to attack
-            if args.random_training:
+            if args.none_random_training:
                 model.set_rands()
 
             X, y = X.to(device), y.to(device)
@@ -238,7 +238,7 @@ def main():
                     delta.grad.zero_()
 
                 delta = delta.detach()
-                if args.random_training:
+                if args.none_random_training:
                     model.set_rands()
 
                 output = model(X + delta[:X.size(0)])
@@ -268,7 +268,7 @@ def main():
                     train_acc / train_n)
                 )
 
-        if args.random_training:
+        if args.none_random_training:
             logger.info('Evaluating with standard images with random weights...')
             test_loss, test_acc = evaluate_standard_random_weights(device,test_loader, model, args)
             logger.info('Evaluating with PGD Attack with random weights...')
