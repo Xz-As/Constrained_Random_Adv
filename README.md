@@ -34,7 +34,7 @@ python train.py --network [baseline name] --dataset cifar10 --attack_iters 10 --
 * To run by `nohup`, please add `--hang` to avoid long log by `tqdm`:
 
 ```
-nohup python train.py [other hyperparameters] --hang
+nohup python train.py [other hyperparameters] --hang > [name of log file] 2>&1 &
 ```
 
 ## Evaluation of CTRW
@@ -49,14 +49,12 @@ python train.py --pretrain [path to model] --epoch -1 --attack_iters [iteration 
 * To evaluate the performance of multiple types of attacks on CIFAR:
 
 ```
-python evaluate.py --dataset cifar10 --network ResNet18 --rp --rp_out_channel 48 --rp_block -1 -1 --save_dir eval_r18_c10 --pretrain [path_to_model]
-```
-
-* To evaluate the performance of ResNet50 with CTRW on ImageNet:
-
-```
-python train_imagenet.py --evaluate --rp --rp_out_channel 48 --save_dir eval_r50_imagenet --eval_model_path [path_to_model]
+python evaluate.py --dataset cifar10 --network ResNet18 --save_dir [path to log] --pretrain [path to model]
 ```
 
 ## Pretrained Models
-Pretrained models are provided in [google-drive](https://drive.google.com/drive/folders/1-MbjFfUo-RjGe9_i1xlqQKHSkV0lABTC?usp=sharing).
+Pretrained models are provided in google drive. The url is
+
+```
+
+```
