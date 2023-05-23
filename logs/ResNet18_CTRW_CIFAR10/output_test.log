@@ -43,3 +43,14 @@
 [2023/05/23 21:29:51] - Dataset: cifar10
 [2023/05/23 21:29:53] - Evaluating with standard images with random weight...
 [2023/05/23 21:29:56] - Nature Acc: 0.8363 	
+[2023/05/23 21:31:56] - Namespace(batch_size=128, data_dir='~/datasets/CIFAR10/', dataset='cifar10', epochs=200, network='ResNet18', worker=4, lr_schedule='multistep', lr_min=0.0, lr_max=0.1, weight_decay=0.0005, momentum=0.9, none_random_training=True, epsilon=8, alpha=2, c=0.0001, steps=1000, seed=0, attack_iters=10, restarts=1, none_adv_training=False, save_dir='logs/ResNet18_CTRW_CIFAR10', pretrain='ResNet18_CTRW_CIFAR10.pth', continue_training=False, lb=2048, pos=0, eot=False, hang=False, device=0)
+[2023/05/23 21:31:56] - Dataset: cifar10
+[2023/05/23 21:31:57] - Evaluating with standard images with random weight...
+[2023/05/23 21:32:00] - Nature Acc: 0.8334 	
+[2023/05/23 21:33:10] - pgd
+[2023/05/23 21:33:10] - adv: 0.6894 	
+[2023/05/23 21:33:10] - PGD Acc: 0.6894 	
+[2023/05/23 21:33:15] - fgsm
+[2023/05/23 21:33:15] - adv: 0.6652 	
+[2023/05/23 21:33:34] - mifgsm
+[2023/05/23 21:33:34] - adv: 0.6580 	
