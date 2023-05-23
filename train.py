@@ -23,7 +23,7 @@ def get_args():
     parser = argparse.ArgumentParser()
     # training settings
     parser.add_argument('--batch_size', default=128, type=int)
-    parser.add_argument('--data_dir', default='~/datasets/CIFAR10/', type=str)
+    parser.add_argument('--data_dir', default='~/datasets/CIFAR/', type=str)
     parser.add_argument('--dataset', default='cifar10', choices=['cifar10', 'cifar100'])
     parser.add_argument('--epochs', default=200, type=int)
     parser.add_argument('--network', default='ResNet18', choices=['ResNet18', 'WideResNet34'], type=str)
