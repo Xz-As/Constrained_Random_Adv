@@ -39,14 +39,14 @@ nohup python train.py [other hyperparameters] --hang
 
 ## Evaluation of CTRW
 
-* To evaluate the performance under PGD attack CIFAR:
+* To evaluate the performance under PGD attack on CIFAR:
 
 ```
 python train.py --pretrain [path to model] --epoch -1 --attack_iters [iteration of PGD attack]
 ```
 
 
-* To evaluate the performance of ResNet18 with CTRW on CIFAR-10:
+* To evaluate the performance of multiple types of attacks on CIFAR:
 
 ```
 python evaluate.py --dataset cifar10 --network ResNet18 --rp --rp_out_channel 48 --rp_block -1 -1 --save_dir eval_r18_c10 --pretrain [path_to_model]
