@@ -100,13 +100,6 @@ class WideResNet(nn.Module):
         return self.fc(out)
 
 
-    def set_norms(self, norm=None):
-        for module in self.modules():
-            if isinstance(module, USNorm):
-                module.set_norms(norm)
-
-
-
 def WideResNet34(num_classes=10, normalize=None, device = torch.device(0), pos = 0, eot = False, lb = 2048):
 
     return WideResNet(num_classes=num_classes, normalize = normalize)
