@@ -1,6 +1,0 @@
-data/
-ckpt/
-__pycache__/
-.gitignore
-utils_norm.py
-ResNet18_CTRW_CIFAR10.pth
