@@ -32,7 +32,7 @@ def get_args():
     parser.add_argument('--lr_max', default=0.1, type=float)
     parser.add_argument('--weight_decay', default=5e-4, type=float)
     parser.add_argument('--momentum', default=0.9, type=float)
-    parser.add_argument('--none_random_training', action='store_false',
+    parser.add_argument('--none_random_training', action='store_true',
                         help='Disable random weight training')
 
     # adversarial settings
@@ -43,7 +43,6 @@ def get_args():
     parser.add_argument('--seed', default=0, type=int, help='Random seed')
     parser.add_argument('--attack_iters', default=10, type=int, help='Attack iterations')
     parser.add_argument('--restarts', default=1, type=int)
-    parser.add_argument('--none_adv_training', action='store_true', help='Whether adv training, add if do not need.')
     
     # checkpoint settings
     parser.add_argument('--save_dir', default='ResNet18_CTRW_CIFAR10', type=str, help='Output directory')
@@ -82,14 +81,14 @@ def evaluate_attack(device, model, test_loader, args, atk, atk_name, logger):
         X, y = X.to(device), y.to(device)
 
         # random select a path to attack
-        if args.none_random_training:
+        if not args.none_random_training:
             model.set_rands()
 
         X_adv = atk(X, y)  # advtorch
         model.load_state_dict(state_dict)
 
         # random select a path to infer
-        if args.none_random_training:
+        if not args.none_random_training:
             model.set_rands()
 
         with torch.no_grad():
@@ -171,10 +170,9 @@ def main():
             print(i)
     model.load_state_dict(state)
     model.eval()
-    args.none_random_training = True
 
     # Evaluation
-    if args.none_random_training:
+    if not args.none_random_training:
         logger.info('Evaluating with standard images with random weight...')
         _, nature_acc = evaluate_standard_random_weights(device, test_loader, model, args)
         logger.info('Nature Acc: %.4f \t', nature_acc)
