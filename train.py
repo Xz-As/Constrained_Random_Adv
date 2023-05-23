@@ -26,7 +26,7 @@ def get_args():
     parser.add_argument('--data_dir', default='~/datasets/CIFAR10/', type=str)
     parser.add_argument('--dataset', default='cifar10', choices=['cifar10', 'cifar100'])
     parser.add_argument('--epochs', default=200, type=int)
-    parser.add_argument('--network', default='ResNet18', choices=['ResNet18', 'WideResNet32'], type=str)
+    parser.add_argument('--network', default='ResNet18', choices=['ResNet18', 'WideResNet34'], type=str)
     parser.add_argument('--worker', default=4, type=int)
     parser.add_argument('--lr_schedule', default='multistep', choices=['cyclic', 'multistep', 'cosine'], type=str)
     parser.add_argument('--lr_min', default=0., type=float)

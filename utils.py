@@ -20,8 +20,8 @@ def load_baseline(name):
         from model.resnet import ResNet18
         return ResNet18
     elif name == 'ResNet18':
-        from model.wide_resnet import WideResNet32
-        return WideResNet32
+        from model.wide_resnet import WideResNet34
+        return WideResNet34
     else:
         raise Exception("Not a good name.")
 
@@ -30,8 +30,8 @@ def load_rand(name):
         from model.first_rand_resnet_lower_bound import ResNet18
         return ResNet18
     elif name == 'ResNet18':
-        from model.first_wide_resnet import WideResNet32
-        return WideResNet32
+        from model.first_wide_resnet import WideResNet34
+        return WideResNet34
 
 
 def load_model(args):

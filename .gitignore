@@ -1,3 +1,4 @@
 data/
 ckpt/
 __pycache__/
+.gitignore

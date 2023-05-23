@@ -107,6 +107,6 @@ class WideResNet(nn.Module):
 
 
 
-def WideResNet32(num_classes=10, normalize=None, device = torch.device(0), pos = 0, eot = False, lb = 2048):
+def WideResNet34(num_classes=10, normalize=None, device = torch.device(0), pos = 0, eot = False, lb = 2048):
 
     return WideResNet(num_classes=num_classes, normalize = normalize)
