@@ -63,7 +63,7 @@ class WideResNet(nn.Module):
         assert ((depth - 4) % 6 == 0)
         n = (depth - 4) / 6
         block = BasicBlock
-        shapes = [(1, 3, 32, 32), (1, 3, 32, 32), (1, 64, 32, 32), (1, 128, 32, 32), (1, 256, 16, 16), (1, 512, 8, 8)]
+        shapes = [(1, 3, 32, 32), (1, 16, 32, 32), (1, 160, 32, 32), (1, 320, 16, 16), (1, 640, 8, 8)]
         self.w_shape = shapes[self.pos]
         Mu_ = torch.ones(self.w_shape).to(device)
         SD_ = torch.ones(self.w_shape).to(device)
@@ -106,6 +106,8 @@ class WideResNet(nn.Module):
 
         if self.pos == 0:
             out = x * (self.rand_weight * self.SD_ + self.Mu_)
+        else:
+            out = x
         out = self.conv1(out)
 
         if self.pos == 1:

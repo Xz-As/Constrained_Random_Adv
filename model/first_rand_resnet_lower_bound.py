@@ -88,7 +88,7 @@ class ResNet(nn.Module):
         self.lb = lb
         self.device = device
         self.in_planes = 64
-        shapes = [(1, 3, 32, 32), (1, 3, 32, 32), (1, 64, 32, 32), (1, 128, 32, 32), (1, 256, 16, 16), (1, 512, 8, 8)]
+        shapes = [(1, 3, 32, 32), (1, 64, 32, 32), (1, 64, 32, 32), (1, 128, 16, 16), (1, 256, 8, 8), (1, 512, 4, 4)]
         self.w_shape = shapes[self.pos]
         Mu_ = torch.ones(self.w_shape).to(self.device)
         SD_ = torch.ones(self.w_shape).to(self.device)
@@ -138,6 +138,8 @@ class ResNet(nn.Module):
 
         if self.pos == 0:
             out = x * (self.rand_weight * self.SD_ + self.Mu_)
+        else:
+            out = x
         out = self.conv1(out)
         out = F.relu(self.bn1(out))
 

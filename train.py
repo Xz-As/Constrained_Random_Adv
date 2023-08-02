@@ -50,8 +50,8 @@ def get_args():
     parser.add_argument('--continue_training', action='store_true', help='Continue training at the checkpoint if exists')
 
     # CTRW settings
-    parser.add_argument('--lb', default=2048, help='The Lower bound of sum of sigma.')
-    parser.add_argument('--pos', default=0, help='The position of CTRW over the whole network.')
+    parser.add_argument('--lb', default=2048, type = int, help='The Lower bound of sum of sigma.')
+    parser.add_argument('--pos', default=0, type = int, help='The position of CTRW over the whole network.')
     parser.add_argument('--eot', action='store_true', help='Whether set random weight each step.')
 
     # running settings
@@ -105,7 +105,7 @@ def main():
 
     # setup network
     net = load_model(args = args)
-    model = net(num_classes=args.num_classes, normalize=dataset_normalization, pos = args.pos, eot = args.eot).to(device)
+    model = net(num_classes=args.num_classes, normalize=dataset_normalization, pos = args.pos, eot = args.eot, device = device).to(device)
     # model = torch.nn.DataParallel(model)      # multi-GPU by DP
     
     logger.info(model)

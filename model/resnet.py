@@ -139,16 +139,9 @@ class ResNet(nn.Module):
 
         out = F.avg_pool2d(out, 4)
         out = out.view(out.size(0), -1)
-        sigma_prime = out.sum()
         #print("sum of sigma:", float(out.sum().cpu().data))
         out = self.linear(out)
-        return out, sigma_prime
-
-
-    def set_norms(self, norm=None):
-        for module in self.modules():
-            if isinstance(module, USNorm):
-                module.set_norms(norm)
+        return out
 
 def ResNet18(num_classes=10, normalize=None, device = torch.device(0), pos = 0, eot = False, lb = 2048):
     return ResNet(BasicBlock, [2,2,2,2], normalize = normalize, num_classes=num_classes)

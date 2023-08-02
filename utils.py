@@ -19,7 +19,7 @@ def load_baseline(name):
     if name == 'ResNet18':
         from model.resnet import ResNet18
         return ResNet18
-    elif name == 'ResNet18':
+    elif name == 'WideResNet34':
         from model.wide_resnet import WideResNet34
         return WideResNet34
     else:
@@ -29,7 +29,7 @@ def load_rand(name):
     if name == 'ResNet18':
         from model.first_rand_resnet_lower_bound import ResNet18
         return ResNet18
-    elif name == 'ResNet18':
+    elif name == 'WideResNet34':
         from model.first_wide_resnet import WideResNet34
         return WideResNet34
 
@@ -199,8 +199,8 @@ def evaluate_standard_random_weights(device, test_loader, model, args):
 
 # evaluate on adv images
 def evaluate_pgd(device, test_loader, model, attack_iters, restarts, args):
-    epsilon = (args.epsilon / 255.)# / std
-    alpha = (args.alpha / 255.)# / std
+    epsilon = (args.epsilon / 255.) / std
+    alpha = (args.alpha / 255.) / std
     pgd_loss = 0
     pgd_acc = 0
     n = 0
