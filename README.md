@@ -51,10 +51,3 @@ python train.py --pretrain [path to model] --epoch -1 --attack_iters [iteration 
 ```
 python evaluate.py --dataset cifar10 --network ResNet18 --save_dir [path to log] --pretrain [path to model]
 ```
-
-## Pretrained Models
-Pretrained models are provided in google drive. The url is
-
-```
-https://drive.google.com/drive/folders/1dUY2PoS3HHGrlSEA0M20ToRJpzW2v067?usp=sharing
-```
